@@ -1,0 +1,141 @@
+import React, { useState } from "react";
+import { AppBar, Toolbar, Typography, Container, Card, CardContent, CardActions, Button, TextField, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Select, MenuItem, FormControl, Box } from "@mui/material";
+import { Link } from "react-router-dom";
+
+const MentorDashboard = () => {
+  const [selectedProject, setSelectedProject] = useState(null);
+  const [filter, setFilter] = useState("");
+  const [submissions, setSubmissions] = useState([
+    { id: 1, student: "John Doe", status: "Pending", marks: "", comments: "" },
+    { id: 2, student: "Jane Smith", status: "Completed", marks: "", comments: "" },
+  ]);
+
+  const handleSelectProject = (projectId) => {
+    setSelectedProject(projectId);
+  };
+
+  const handleFilterChange = (event) => {
+    setFilter(event.target.value);
+  };
+
+  const handleSave = (index) => {
+    const updatedSubmissions = [...submissions];
+    updatedSubmissions[index].marks = updatedSubmissions[index].marks;
+    updatedSubmissions[index].comments = updatedSubmissions[index].comments;
+    setSubmissions(updatedSubmissions);
+  };
+
+  const handleDelete = (index) => {
+    const updatedSubmissions = submissions.filter((_, i) => i !== index);
+    setSubmissions(updatedSubmissions);
+  };
+
+  return (
+    <div>
+      <Box>
+        <AppBar position="static">
+          <Toolbar>
+            <div>
+              <img src="src/images/logo.jpg" alt="Logo" />
+            </div>
+            <Box>
+              <Typography>MENTOR</Typography>
+              <Typography>Dashboard</Typography>
+            </Box>
+            <Link to="/login">
+              <Button>Logout</Button>
+            </Link>
+          </Toolbar>
+        </AppBar>
+      </Box>
+
+      <Container>
+        <Typography variant="h4">Projects</Typography>
+        <Card>
+          <CardContent>
+            <Typography variant="h6">Project Title</Typography>
+          </CardContent>
+          <CardActions>
+            <Button size="small" onClick={() => handleSelectProject(1)}>
+              View Submissions
+            </Button>
+          </CardActions>
+        </Card>
+
+        {selectedProject && (
+          <div>
+            <Typography variant="h5">Submissions for Project</Typography>
+            <FormControl>
+              <Select value={filter} onChange={handleFilterChange}>
+                <MenuItem value="">All</MenuItem>
+                <MenuItem value="completed">Completed</MenuItem>
+                <MenuItem value="pending">Pending</MenuItem>
+              </Select>
+            </FormControl>
+
+            <TableContainer>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Student</TableCell>
+                    <TableCell>Status</TableCell>
+                    <TableCell>Marks</TableCell>
+                    <TableCell>Comments</TableCell>
+                    <TableCell>Actions</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {submissions.map((submission, index) => (
+                    <TableRow key={submission.id}>
+                      <TableCell>{submission.student}</TableCell>
+                      <TableCell>{submission.status}</TableCell>
+                      <TableCell>
+                        <TextField
+                          value={submission.marks}
+                          onChange={(e) => {
+                            const updatedSubmissions = [...submissions];
+                            updatedSubmissions[index].marks = e.target.value;
+                            setSubmissions(updatedSubmissions);
+                          }}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <TextField
+                          value={submission.comments}
+                          onChange={(e) => {
+                            const updatedSubmissions = [...submissions];
+                            updatedSubmissions[index].comments = e.target.value;
+                            setSubmissions(updatedSubmissions);
+                          }}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <Button variant="contained" onClick={() => handleSave(index)}>
+                          Save
+                        </Button>
+                        <Button variant="outlined" color="error" onClick={() => handleDelete(index)}>
+                          Delete
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </div>
+        )}
+
+        <div>
+          <Typography variant="h5">Reference Materials</Typography>
+          <TextField placeholder="Enter reference material" />
+          <div>
+            <Button>Add</Button>
+            <Button>Delete</Button>
+          </div>
+        </div>
+      </Container>
+    </div>
+  );
+};
+
+export default MentorDashboard;
